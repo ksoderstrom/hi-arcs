@@ -1,0 +1,28 @@
+{
+  "episodes": {
+    "93": "X1ZvW5Bq4GU",
+    "94": "5OIQ4vxKpnY"
+  },
+  "arcs": {
+    "mr-chompers": {
+      "title": "Mr. Chompers",
+      "parts": [
+        {
+          "episode": "93",
+          "startTime": "02:07",
+          "endTime": "13:04"
+        },
+        {
+          "episode": "93",
+          "startTime": "1:50:38",
+          "endTime": "1:51:24"
+        },
+        {
+          "episode": "94",
+          "startTime": "00:00",
+          "endTime": "23:08"
+        }
+      ]
+    }
+  }
+}

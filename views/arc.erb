@@ -1,0 +1,80 @@
+<div class="row">
+  <div class="col-md-12">
+    <h1><%= @arc['title'] %></h1>
+  </div>
+  <div id="youtube" class="col-md-8"></div>
+  <div class="col-md-4">
+    <div class="list-group" id="episode-parts">
+      <% @arc['parts'].each_with_index do |part, index| %>
+        <a class="list-group-item list-group-item-action" href="javascript:playPart(<%= index %>);">Episode <%= part['episode'] %> <%= part['startTime'] %>-<%= part['endTime'] %></a>
+      <% end %>
+    </ul>
+  </div>
+</div>
+
+<script>
+  var arc = <%= @arc.to_json %>;
+  var episodes = <%= @episodes.to_json %>;
+
+  var tag = document.createElement('script');
+  tag.src = "https://www.youtube.com/player_api";
+  var firstScriptTag = document.getElementsByTagName('script')[0];
+  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+  var player;
+  var currentlyPlaying = -1;
+
+  function onYouTubePlayerAPIReady() {
+    player = new YT.Player('youtube', {
+      events: {
+        'onReady': onPlayerReady,
+        'onStateChange': onPlayerStateChange
+      }
+    });
+  }
+
+  var hasReceivedPlaying = false;
+  function onPlayerStateChange(event) {
+    if (event.data === YT.PlayerState.PLAYING) {
+      hasReceivedPlaying = true;
+    }
+    if (event.data === YT.PlayerState.ENDED && hasReceivedPlaying) {
+      console.log('Received ENDED state from player');
+      if (currentlyPlaying < arc.parts.length - 1) {
+        hasReceivedPlaying = false;
+        playPart(currentlyPlaying + 1);
+      }
+    }
+  }
+
+  function onPlayerReady() {
+    playPart(0);
+  }
+
+  function playPart(index) {
+    currentlyPlaying = index;
+    var part = arc.parts[index];
+    var episode = episodes[part.episode];
+    console.log(`Playing part ${currentlyPlaying}`, part, episode);
+
+    player.loadVideoById({
+      'videoId': episode,
+      'startSeconds': secondsFromTime(part.startTime),
+      'endSeconds': secondsFromTime(part.endTime),
+    });
+
+    $('#episode-parts>a').removeClass('active');
+    $('#episode-parts').children().eq(index).addClass('active');
+  }
+
+  function secondsFromTime(time) {
+    var parts = time.split(/:/);
+    if (parts.length === 1) {
+      return parseInt(parts[0]);
+    } else if (parts.length === 2) {
+      return parseInt(parts[0]) * 60 + parseInt(parts[1]);
+    } else {
+      return parseInt(parts[0]) * 60 * 60 + parseInt(parts[1]) * 60 + parseInt(parts[2]);
+    }
+  }
+</script>

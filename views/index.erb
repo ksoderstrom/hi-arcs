@@ -1,0 +1,9 @@
+<p>
+  This site documents story arcs from different episodes from the podcast <a href="https://www.hellointernet.fm/">Hello Internet</a>. Click an arc to watch/listen to it.
+</p>
+
+<ul>
+  <% @arcs.each do |key, arc| %>
+    <li><a href="<%= "/arcs/#{key}"%>"><%= arc['title'] %></a></li>
+  <% end %>
+</ul>
